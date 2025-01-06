@@ -12,13 +12,6 @@
             background-color: rgba(0, 0, 0, 0.2);
         }
 
-        canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            display: block;
-        }
-
         p {
             color: aliceblue;
             font-size: 1.2rem;
@@ -28,10 +21,17 @@
             margin: 0;
             z-index: 10;
         }
+
+        canvas {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
     </style>
 </head>
 <body>
-    <p>beyza</p>
+    <p>beyzossssssuma özel</p>
     <canvas id="heart"></canvas>
     <script>
         window.requestAnimationFrame = 
@@ -43,26 +43,38 @@
                 return setTimeout(callback, 1000 / 60);
             };
 
-        let canvas, ctx, width, height, heartPoints = [], targetPoints = [];
-        const traceCount = 50, timeDelta = 0.01, config = { traceK: 0.4 };
-        const elements = [];
+        const canvas = document.getElementById('heart');
+        const ctx = canvas.getContext('2d');
 
-        const init = () => {
-            canvas = document.getElementById('heart');
-            ctx = canvas.getContext('2d');
-            resizeCanvas();
+        let width, height, heartPoints = [], elements = [];
+        const traceCount = 50, timeDelta = 0.01;
 
-            const dr = 0.1; // Daha fazla detay için küçük adım aralığı
+        const resizeCanvas = () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        };
+
+        const initHeartPoints = () => {
+            const dr = 0.1;
+            heartPoints = [];
             for (let rad = 0; rad < Math.PI * 2; rad += dr) {
                 heartPoints.push(getHeartPosition(rad, 210, 13));
                 heartPoints.push(getHeartPosition(rad, 150, 9));
                 heartPoints.push(getHeartPosition(rad, 90, 5));
             }
+        };
 
+        const getHeartPosition = (angle, sx, sy) => [
+            Math.pow(Math.sin(angle), 3) * sx + width / 2,
+            -(15 * Math.cos(angle) - 5 * Math.cos(2 * angle) - 2 * Math.cos(3 * angle) - Math.cos(4 * angle)) * sy + height / 2
+        ];
+
+        const initElements = () => {
+            elements = [];
             for (let i = 0; i < heartPoints.length; i++) {
                 const x = Math.random() * width;
                 const y = Math.random() * height;
-                elements[i] = {
+                elements.push({
                     x,
                     y,
                     vx: 0,
@@ -72,23 +84,9 @@
                     D: 2 * (i % 2) - 1,
                     trace: Array.from({ length: traceCount }, () => ({ x, y })),
                     f: `hsla(${Math.random() * 360}, 80%, 60%, 0.5)`
-                };
+                });
             }
-
-            animate();
         };
-
-        const resizeCanvas = () => {
-            canvas.width = width = window.innerWidth;
-            canvas.height = height = window.innerHeight;
-            ctx.fillStyle = "rgba(0, 0, 0, 1)";
-            ctx.fillRect(0, 0, width, height);
-        };
-
-        const getHeartPosition = (angle, sx, sy) => [
-            Math.pow(Math.sin(angle), 3) * sx + width / 2,
-            -(15 * Math.cos(angle) - 5 * Math.cos(2 * angle) - 2 * Math.cos(3 * angle) - Math.cos(4 * angle)) * sy + height / 2
-        ];
 
         const animate = () => {
             ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
@@ -124,7 +122,19 @@
             window.requestAnimationFrame(animate);
         };
 
-        window.addEventListener('resize', resizeCanvas);
+        const init = () => {
+            resizeCanvas();
+            initHeartPoints();
+            initElements();
+            animate();
+        };
+
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            initHeartPoints();
+            initElements();
+        });
+
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
