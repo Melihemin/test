@@ -52,7 +52,7 @@
 
         const initHeartPoints = () => {
             heartPoints = [];
-            const scale = Math.min(width, height) / 6; // Kalbin boyutu mobilde optimize edildi.
+            const scale = Math.min(width, height) / 3; // Kalbin ölçeği sabit tutuldu.
             const dr = 0.1;
             for (let rad = 0; rad < Math.PI * 2; rad += dr) {
                 heartPoints.push(getHeartPosition(rad, scale));
